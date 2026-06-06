@@ -1,0 +1,99 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "deno generic",
+    "author": "aetherix@lunexia.com",
+    "description": "A generic Deno egg.\r\n\r\nDeno v2.7 — secure TypeScript runtime. Security-first with explicit permission flags.\r\n\r\nThis will clone a git repo. Defaults to master branch.\r\nPermissions: --allow-net --allow-read --allow-env --allow-write",
+    "features": null,
+    "docker_images": {
+        "Deno 2.7 (Latest)": "ghcr.io/parkervcp/yolks:deno_2"
+    },
+    "file_denylist": [],
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; /usr/bin/deno run --allow-net --allow-read --allow-env --allow-write /home/container/{{MAIN_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"change this part\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# Deno Generic Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y git curl jq file unzip\r\nmkdir -p /mnt/server && cd /mnt/server\r\n\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\r\n    echo \"user upload mode.\"; exit 0\r\nfi\r\n\r\n[[ ${GIT_ADDRESS} != *.git ]] && GIT_ADDRESS=${GIT_ADDRESS}.git\r\n[ -z \"${USERNAME}\" ] || GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo ${GIT_ADDRESS} | cut -d/ -f3-)\"\r\n\r\nif [ ! \"$(ls -A /mnt/server)\" ]; then\r\n    git clone ${GIT_ADDRESS} /mnt/server\r\n    [ ! -z \"${BRANCH}\" ] && git checkout ${BRANCH}\r\nfi\r\n\r\nif [ -f /mnt/server/deno.json ] || [ -f /mnt/server/deno.jsonc ]; then\r\n    echo \"caching deno dependencies...\"\r\n    /usr/bin/deno cache /mnt/server/${MAIN_FILE}\r\nfi\r\n\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:deno_2",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Main File",
+            "description": "Main file to run. Default is main.ts",
+            "env_variable": "MAIN_FILE",
+            "default_value": "main.ts",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Auto Update",
+            "description": "Pull latest git on startup. 1 = enabled.",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Repo Address",
+            "description": "Git repo to clone.",
+            "env_variable": "GIT_ADDRESS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:256",
+            "field_type": "text"
+        },
+        {
+            "name": "Branch",
+            "description": "Git branch. Defaults to master.",
+            "env_variable": "BRANCH",
+            "default_value": "master",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Username",
+            "description": "Git username for private repos.",
+            "env_variable": "USERNAME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Access Token",
+            "description": "Git token for private repos.",
+            "env_variable": "ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "User Upload",
+            "description": "Set to 1 if uploading your own files.",
+            "env_variable": "USER_UPLOAD",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        }
+    ]
+}
