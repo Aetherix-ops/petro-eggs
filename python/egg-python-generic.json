@@ -1,0 +1,112 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "python generic (updated)",
+    "author": "aetherix@lunexia.com",
+    "description": "A generic Python egg.\r\n\r\nUpdated with Python 3.13 support.\r\n\r\nThis will clone a git repo. Defaults to master if no branch is specified.\r\nInstalls requirements.txt automatically on install.",
+    "features": null,
+    "docker_images": {
+        "Python 3.13 (Latest)": "ghcr.io/parkervcp/yolks:python_3.13",
+        "Python 3.12": "ghcr.io/parkervcp/yolks:python_3.12",
+        "Python 3.11": "ghcr.io/parkervcp/yolks:python_3.11",
+        "Python 3.10": "ghcr.io/parkervcp/yolks:python_3.10"
+    },
+    "file_denylist": [],
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${PY_PACKAGES} ]]; then pip install ${PY_PACKAGES}; fi; if [ -f /home/container/requirements.txt ]; then pip install -r requirements.txt; fi; python /home/container/{{MAIN_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"change this part\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# Python Generic Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y git curl jq file unzip python3 python3-pip\r\nmkdir -p /mnt/server && cd /mnt/server\r\n\r\nif [ \"${USER_UPLOAD}\" == \"true\" ] || [ \"${USER_UPLOAD}\" == \"1\" ]; then\r\n    echo \"user upload mode.\"; exit 0\r\nfi\r\n\r\n[[ ${GIT_ADDRESS} != *.git ]] && GIT_ADDRESS=${GIT_ADDRESS}.git\r\n[ -z \"${USERNAME}\" ] || GIT_ADDRESS=\"https://${USERNAME}:${ACCESS_TOKEN}@$(echo ${GIT_ADDRESS} | cut -d/ -f3-)\"\r\n\r\nif [ ! \"$(ls -A /mnt/server)\" ]; then\r\n    git clone ${GIT_ADDRESS} /mnt/server\r\n    [ ! -z \"${BRANCH}\" ] && git checkout ${BRANCH}\r\nfi\r\n\r\n[ -f /mnt/server/requirements.txt ] && pip install -r /mnt/server/requirements.txt\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:python_3.13",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Main File",
+            "description": "Main Python file to run. Default is main.py",
+            "env_variable": "MAIN_FILE",
+            "default_value": "main.py",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Auto Update",
+            "description": "Pull latest git on startup. 1 = enabled.",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Repo Address",
+            "description": "Git repo to clone.",
+            "env_variable": "GIT_ADDRESS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:256",
+            "field_type": "text"
+        },
+        {
+            "name": "Branch",
+            "description": "Git branch. Defaults to master.",
+            "env_variable": "BRANCH",
+            "default_value": "master",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Username",
+            "description": "Git username for private repos.",
+            "env_variable": "USERNAME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Access Token",
+            "description": "Git token for private repos.",
+            "env_variable": "ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Python Packages",
+            "description": "Extra pip packages to install. Space separated.",
+            "env_variable": "PY_PACKAGES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:256",
+            "field_type": "text"
+        },
+        {
+            "name": "User Upload",
+            "description": "Set to 1 if uploading your own files.",
+            "env_variable": "USER_UPLOAD",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        }
+    ]
+        }
