@@ -1,0 +1,39 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "SQLite Web Manager",
+    "author": "aetherix@lunexia.com",
+    "description": "SQLite web-based manager egg.\r\n\r\nRuns sqlite-web — a lightweight web UI to browse, query, and manage SQLite database files.\r\nUseful for inspecting .db files from your bots or apps.\r\n\r\nDefault port: 8080.",
+    "features": null,
+    "docker_images": {
+        "Python 3.13 (sqlite-web)": "ghcr.io/parkervcp/yolks:python_3.13"
+    },
+    "file_denylist": [],
+    "startup": "sqlite_web --host 0.0.0.0 --port {{SERVER_PORT}} --no-browser /home/container/{{DB_FILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Running on http\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# SQLite Web Manager Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y python3 python3-pip sqlite3\r\n\r\npip install sqlite-web\r\n\r\nmkdir -p /mnt/server\r\n\r\nif [ ! -f /mnt/server/${DB_FILE} ]; then\r\n    echo \"creating empty database file: ${DB_FILE}\"\r\n    sqlite3 /mnt/server/${DB_FILE} \"VACUUM;\"\r\nfi\r\n\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:python_3.13",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Database File",
+            "description": "Name of the SQLite .db file to open. Will be created if it does not exist.",
+            "env_variable": "DB_FILE",
+            "default_value": "database.db",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        }
+    ]
+}
