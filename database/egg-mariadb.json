@@ -1,0 +1,50 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "MariaDB",
+    "author": "aetherix@lunexia.com",
+    "description": "MariaDB database server egg.\r\n\r\nMariaDB 11.7 is the latest stable release. MariaDB 10.11 is the current LTS branch supported through 2028.\r\n\r\nDefault port: 3306.\r\nData is stored in /home/container/data.",
+    "features": null,
+    "docker_images": {
+        "MariaDB 11.7 (Latest)": "ghcr.io/parkervcp/yolks:mariadb_11",
+        "MariaDB 10.11 (LTS)": "ghcr.io/parkervcp/yolks:mariadb_10"
+    },
+    "file_denylist": [],
+    "startup": "mariadbd --user=root --datadir=/home/container/data --port={{SERVER_PORT}} --bind-address=0.0.0.0 --innodb-buffer-pool-size={{BUFFER_POOL}}M",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"ready for connections\"\r\n}",
+        "logs": "{}",
+        "stop": "mariadb-admin shutdown"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# MariaDB Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y mariadb-server\r\n\r\nmkdir -p /mnt/server/data\r\n\r\nmysql_install_db --user=root --datadir=/mnt/server/data\r\n\r\necho \"[mysqld]\" > /mnt/server/my.cnf\r\necho \"datadir=/home/container/data\" >> /mnt/server/my.cnf\r\necho \"port=3306\" >> /mnt/server/my.cnf\r\necho \"bind-address=0.0.0.0\" >> /mnt/server/my.cnf\r\necho \"innodb_buffer_pool_size=128M\" >> /mnt/server/my.cnf\r\n\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:mariadb_11",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "MariaDB Root Password",
+            "description": "Root password for MariaDB.",
+            "env_variable": "MARIADB_ROOT_PASSWORD",
+            "default_value": "changeme",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "InnoDB Buffer Pool (MB)",
+            "description": "Buffer pool size in MB. Recommended: 50-75% of available RAM.",
+            "env_variable": "BUFFER_POOL",
+            "default_value": "128",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:64|max:16384",
+            "field_type": "text"
+        }
+    ]
+}
