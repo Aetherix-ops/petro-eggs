@@ -1,0 +1,60 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "Redis",
+    "author": "aetherix@lunexia.com",
+    "description": "Redis in-memory data store egg.\r\n\r\nRedis 8.x is the latest stable release.\r\nUsed for caching, session storage, pub/sub messaging, and queues.\r\n\r\nDefault port: 6379.\r\nPersistence data stored in /home/container/data.",
+    "features": null,
+    "docker_images": {
+        "Redis 8 (Latest)": "ghcr.io/parkervcp/yolks:redis_8",
+        "Redis 7": "ghcr.io/parkervcp/yolks:redis_7"
+    },
+    "file_denylist": [],
+    "startup": "redis-server --port {{SERVER_PORT}} --bind 0.0.0.0 --maxmemory {{MAX_MEMORY}}mb --maxmemory-policy {{EVICTION_POLICY}} --requirepass {{REDIS_PASSWORD}} --save 900 1 --save 300 10 --dir /home/container/data",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Ready to accept connections\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# Redis Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y redis-server\r\n\r\nmkdir -p /mnt/server/data\r\n\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:redis_8",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Redis Password",
+            "description": "Password for Redis authentication. Leave empty to disable auth.",
+            "env_variable": "REDIS_PASSWORD",
+            "default_value": "changeme",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Memory (MB)",
+            "description": "Maximum memory Redis can use in MB.",
+            "env_variable": "MAX_MEMORY",
+            "default_value": "256",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:64|max:16384",
+            "field_type": "text"
+        },
+        {
+            "name": "Eviction Policy",
+            "description": "What to do when max memory is reached. Options: allkeys-lru, volatile-lru, allkeys-lfu, noeviction",
+            "env_variable": "EVICTION_POLICY",
+            "default_value": "allkeys-lru",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:32",
+            "field_type": "text"
+        }
+    ]
+        }
