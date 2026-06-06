@@ -1,0 +1,51 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": { "version": "PTDL_v2", "update_url": null },
+    "exported_at": "2026-06-06T00:00:00+07:00",
+    "name": "MongoDB",
+    "author": "aetherix@lunexia.com",
+    "description": "MongoDB document database server egg.\r\n\r\nMongoDB 8.2 is the latest stable release.\r\nNoSQL document-oriented database using JSON-like BSON documents.\r\n\r\nDefault port: 27017.\r\nData is stored in /home/container/data.",
+    "features": null,
+    "docker_images": {
+        "MongoDB 8.2 (Latest)": "ghcr.io/parkervcp/yolks:mongodb_8",
+        "MongoDB 7.0": "ghcr.io/parkervcp/yolks:mongodb_7",
+        "MongoDB 6.0": "ghcr.io/parkervcp/yolks:mongodb_6"
+    },
+    "file_denylist": [],
+    "startup": "mongod --dbpath /home/container/data --port {{SERVER_PORT}} --bind_ip 0.0.0.0 --wiredTigerCacheSizeGB {{CACHE_SIZE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"Waiting for connections\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# MongoDB Installation Script\r\n# by Aetherix-ops\r\n#\r\napt update && apt install -y curl gnupg\r\n\r\ncurl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-8.0.gpg\r\necho \"deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse\" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list\r\n\r\napt update && apt install -y mongodb-org\r\n\r\nmkdir -p /mnt/server/data\r\n\r\necho \"install complete\"",
+            "container": "ghcr.io/parkervcp/yolks:mongodb_8",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "WiredTiger Cache Size (GB)",
+            "description": "Cache size in GB. Recommended: ~50% of available RAM. Minimum 0.25.",
+            "env_variable": "CACHE_SIZE",
+            "default_value": "0.5",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:8",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Auth",
+            "description": "Enable MongoDB authentication. Set to 1 to enable.",
+            "env_variable": "MONGO_AUTH",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        }
+    ]
+}
