@@ -9,7 +9,7 @@ Forked and updated from pelican-eggs/eggs (https://github.com/pelican-eggs/eggs)
 
 Runtime   | Version                           | File
 ----------|-----------------------------------|------------------------------------------
-Node.js   | 18 / 20 / 21 / 22 / 23 / 24 / 26 | nodejs/egg-node-js-updated.json
+Node.js   | 18 / 20 / 21 / 22 / 23 / 24 / 26 | nodejs/egg-node-js.json
 Python    | 3.10 / 3.11 / 3.12 / 3.13        | python/egg-python-generic.json
 Bun       | 1.3 (Latest)                      | bun/egg-bun-generic.json
 Deno      | 2.7 (Latest)                      | deno/egg-deno-generic.json
@@ -87,7 +87,7 @@ DB_FILE              | SQLite database file name            | database.db
 
     ptero-eggs/
     |- nodejs/
-    |   |- egg-node-js-updated.json
+    |   |- egg-node-js.json
     |- python/
     |   |- egg-python-generic.json
     |- bun/
